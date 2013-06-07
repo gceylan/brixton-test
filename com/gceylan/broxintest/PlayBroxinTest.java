@@ -59,7 +59,6 @@ public class PlayBroxinTest extends JFrame {
 	 * Grup ayarlarý
 	 * 
 	 * */
-
 	private DefaultTableModel modelGruplar;
 	private JTable tableGruplar;
 	private Vector<Object> gruplar = new Vector<Object>();

@@ -26,7 +26,9 @@ import javax.swing.border.LineBorder;
 
 import com.gceylan.broxintest.beans.Grup;
 import com.gceylan.broxintest.beans.Ogrenci;
+import com.gceylan.broxintest.beans.Sonuc;
 import com.gceylan.broxintest.beans.TestSekli;
+import com.gceylan.broxintest.services.SonucService;
 
 public class BrixtonTest extends JFrame {
 	private static final long serialVersionUID = -7513624641385543799L;
@@ -124,50 +126,47 @@ public class BrixtonTest extends JFrame {
 	 */
 	public BrixtonTest(Grup g, Ogrenci o, TestSekli t) {
 		
-//		if (g == null || o == null || t == null ) {
-//			System.out.println("parametreler gönderilemedi...\n" +
-//					"PlayBroxinTest.java' yý çalýþtýrýn");
-//			System.exit(0);
-//		}
-//		
-//		this.grup = g;
-//		this.ogrenci = o;
-//		this.testSekli = t;
+		if (g == null || o == null || t == null ) {
+			System.out.println("parametreler gönderilemedi...\n" +
+					"PlayBroxinTest.java' yý çalýþtýrýn");
+			System.exit(0);
+		}
+		
+		this.grup = g;
+		this.ogrenci = o;
+		this.testSekli = t;
+		
 		
 		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(50, 50, 980, 550);
+		setResizable(true);
+		setLocationRelativeTo(null);
+		setVisible(true);
 		contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
 		/*
 		 * Menüye gerek olmayabilir.
+		 * 
 		 * */
-		JMenuBar menubar = new JMenuBar();
-
-		JMenu dosya = new JMenu("Dosya");
-		menubar.add(dosya);
-		JMenuItem yeni = new JMenuItem("Yeni");
-		dosya.add(yeni);
-		JMenuItem kaydet = new JMenuItem("Kaydet");
-		dosya.add(kaydet);
-		JMenuItem cikis = new JMenuItem("Çýkýþ");
-		dosya.add(cikis);
-
-		JMenu yardim = new JMenu("Yardým");
-		menubar.add(yardim);
-		JMenuItem hakkimizda = new JMenuItem("Hakkýmýzda");
-		yardim.add(hakkimizda);
-
-		cikis.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-		
-		setJMenuBar(menubar);
+//		JMenuBar menubar = new JMenuBar();
+//
+//		JMenu dosya = new JMenu("Dosya");
+//		menubar.add(dosya);
+//		JMenuItem yeni = new JMenuItem("Yeni");
+//		dosya.add(yeni);
+//		JMenuItem kaydet = new JMenuItem("Kaydet");
+//		dosya.add(kaydet);
+//		JMenuItem cikis = new JMenuItem("Çýkýþ");
+//		dosya.add(cikis);
+//
+//		JMenu yardim = new JMenu("Yardým");
+//		menubar.add(yardim);
+//		JMenuItem hakkimizda = new JMenuItem("Hakkýmýzda");
+//		yardim.add(hakkimizda);
+//		
+//		setJMenuBar(menubar);
 
 		/*
 		 * üst panel
@@ -175,7 +174,9 @@ public class BrixtonTest extends JFrame {
 		 * */
 		JPanel pNorth = new JPanel();
 		pNorth.setBackground(Color.BLUE);
-		pNorth.add(new JLabel("The Broxin Test"));
+		String baslik = "Seçilen Grup: " + getGrup().getAd() + ", "
+				+ "Seçilen Öðrenci: " + getOgrenci().getAd() + ", Test Þekli: " + getTestSekli().getAd();
+		pNorth.add(new JLabel(baslik));
 		contentPane.add(pNorth, BorderLayout.NORTH);
 
 		
@@ -213,21 +214,21 @@ public class BrixtonTest extends JFrame {
 		 * 
 		 * 
 		 * */
-		JPanel titlePanel = new JPanel();
-		titlePanel.setBackground(Color.WHITE);
-		titlePanel.add(title);
+		JPanel notificationPanel = new JPanel();
+		notificationPanel.setBackground(Color.WHITE);
+		notificationPanel.add(title);
 		
-		JPanel pGuney = new JPanel();
-		pGuney.setBackground(Color.WHITE);
+		JPanel nextPanel = new JPanel();
+		nextPanel.setBackground(Color.WHITE);
 		nextButton = new JButton("NEXT >>");
 		nextButton.setEnabled(false);
-		pGuney.add(nextButton, BorderLayout.EAST);
+		nextPanel.add(nextButton, BorderLayout.EAST);
 		
 		nextButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (sayfaNumarasi <= 55) {
-					nextButton.setEnabled(false);
+//					nextButton.setEnabled(false);
 					
 					circlePanel.removeAll();		// bu tüm panel üzerindeki componentleri siler.
 					
@@ -248,10 +249,21 @@ public class BrixtonTest extends JFrame {
 								+ "T: " + dogruSayisi + ", F: " + yanlisSayisi);
 						sayfaNumarasi++;
 					}
+					
 					else if (sayfaNumarasi == 55 && sayfaNumarasi < 56) {
+
 						title.setText("Test Bitti!");
 						String message = "Doðru: " + dogruSayisi + "\nYanlýþ: " + yanlisSayisi + "";
 						JOptionPane.showMessageDialog(null, message);
+						
+						/*
+						 * puan neye göre hesaplanacak?
+						 * */
+						SonucService sonucService = new SonucService();
+						sonucService.sonucuKaydet(getGrup(), getOgrenci(), getTestSekli(), dogruSayisi, yanlisSayisi, "puan: XXX");
+						
+						circlePanel.removeAll();
+						nextButton.setEnabled(false);
 					}
 				}
 				
@@ -268,9 +280,9 @@ public class BrixtonTest extends JFrame {
 		
 		pCenter.setLayout(new BorderLayout(10, 10));
 		pCenter.setBackground(Color.LIGHT_GRAY);	// RED
-		pCenter.add(titlePanel, BorderLayout.NORTH);
+		pCenter.add(notificationPanel, BorderLayout.NORTH);
 		pCenter.add(circlePanel, BorderLayout.CENTER);
-		pCenter.add(pGuney, BorderLayout.SOUTH);
+		pCenter.add(nextPanel, BorderLayout.SOUTH);
 		
 		contentPane.add(pCenter, BorderLayout.CENTER);
 
@@ -284,7 +296,7 @@ public class BrixtonTest extends JFrame {
 		pSouth.add(new JLabel("Merhaba Dünya! (3)"));
 		contentPane.add(pSouth, BorderLayout.SOUTH);
 
-//		getInfomationTestter();
+		getInfomationTestter();
 	}
 	
 	public void durumuGoruntule(JButton mavi, JButton kirmizi) {

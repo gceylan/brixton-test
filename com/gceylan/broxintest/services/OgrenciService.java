@@ -14,9 +14,6 @@ public class OgrenciService {
 	private PreparedStatement preparedStatement;
 	private ResultSet resultSet;
 	
-	public OgrenciService() {
-	}
-	
 	public Vector<Object> tumOgrencileriGetir() {
 		DatabaseConnection dbConnection = new DatabaseConnection();
 		connection = dbConnection.setConnection();
